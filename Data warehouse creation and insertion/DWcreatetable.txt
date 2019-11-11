@@ -1,0 +1,126 @@
+use Services_DW
+create table Member(member_key int not null Primary key, lastname varchar(50), firstname varchar(50), city varchar(50), curr_balance money,
+prev_balance money, region_key int, corp_key int)
+
+select * from Member
+
+create table Corporation(corp_key int not null Primary key, corp_name varchar(50),region_key int, region_name varchar(50), 
+city varchar(50), state_prov char(20), country char(20))
+
+select * from Corporation
+
+create table Provider(provider_key int not null Primary Key, provider_name varchar(50), region_key int, country char(20), state_prov char(20),
+issue_dt datetime, expr_dt datetime)
+
+select * from Provider
+
+create table Category(category_key int not null Primary Key, category_desc varchar(50), category_code char(20))
+
+select * from Category
+
+use Services_DW
+create table Service_fact(service_key int, service_dt datetime, servive_amt money,
+member_key int, Foreign Key (member_key) References Member(member_key),
+provider_key int, Foreign key (provider_key) References Provider(provider_key),
+category_key int, Foreign key (category_key) References Category(category_key),
+region_key int, Foreign Key (region_key) References Region(region_key))
+
+select * from Service_fact
+
+create table Region(region_key int not null Primary Key, region_name varchar(50))
+select* from Region
+
+
+
+INSERT QUERY:
+Member:
+USE [Services_DW]
+GO
+
+INSERT INTO [dbo].[Member]
+           ([member_key]
+           ,[lastname]
+           ,[firstname]
+           ,[city]
+           ,[curr_balance]
+           ,[prev_balance]
+           ,[region_key]
+           ,[corp_key])
+		   SELECT [member_no]
+      ,[lastname]
+      ,[firstname]
+      ,[city]
+	  ,[curr_balance]
+      ,[prev_balance]
+      ,[region_no]
+	  ,[corp_no]
+  FROM [Credit].[dbo].[member]
+     
+GO
+
+Provider:
+USE [Services_DW]
+GO
+
+INSERT INTO [dbo].[Provider]
+           ([provider_key]
+           ,[provider_name]
+           ,[region_key]
+           ,[country]
+           ,[state_prov]
+           ,[issue_dt]
+           ,[expr_dt])
+    SELECT [provider_no]
+      ,[provider_name]
+      ,[region_no]
+      ,[country]
+      ,[state_prov]
+      ,[issue_dt]
+      ,[expr_dt]
+      
+      
+  FROM [Credit].[dbo].[provider]
+
+
+Category:
+USE [Services_DW]
+GO
+
+INSERT INTO [dbo].[Category]
+           ([category_key]
+           ,[category_desc]
+           ,[category_code])
+     SELECT [category_no]
+      ,[category_desc]
+      ,[category_code]
+  FROM [Credit].[dbo].[category]
+
+Corporation:
+USE [Services_DW]
+GO
+
+INSERT INTO [dbo].[Corporation]
+           ([corp_key]
+           ,[corp_name]
+           ,[region_key]
+           ,[region_name]
+           ,[city]
+           ,[state_prov]
+           ,[country])
+     Select C.corp_no, C.corp_name, C.region_no, R.region_name, C.city, C.state_prov, C.country
+	 From Credit.dbo.corporation AS C inner join Credit.dbo.region AS R
+	 ON C.region_no=R.region_no 
+
+Region:
+USE [Services_DW]
+GO
+
+INSERT INTO [dbo].[Region]
+           ([region_key]
+           ,[region_name])
+     SELECT [region_no]
+      ,[region_name]
+
+  FROM [Credit].[dbo].[region]
+
+
